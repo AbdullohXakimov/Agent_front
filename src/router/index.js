@@ -19,6 +19,7 @@ import UserProfile from "../pages/user/UserProfile.vue";
 import Orders from "../pages/user/Orders.vue";
 import Login from "../pages/user/Login.vue";
 import Register from "../pages/user/Register.vue";
+import ProductsInShop from "../pages/user/ProductsInShop.vue";
 
 
 const routes = [
@@ -62,6 +63,7 @@ const routes = [
   { path: "/orders", component: Orders },
   { path: "/login", component: Login },
   { path: "/register", component: Register },
+  { path: "/products-in-shop", component: ProductsInShop},
 ];
 
 const router = createRouter({

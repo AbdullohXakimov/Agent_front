@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-
+  import MainLayout from "../../layouts/user/MainLayout.vue";
 </script>
 
 <style scoped>

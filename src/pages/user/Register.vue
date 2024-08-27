@@ -21,6 +21,7 @@
 
 <script setup>
 import { ref } from 'vue';
+  import AuthLayout from "../../layouts/user/AuthLayout.vue";
 
 
 const name = ref('');

@@ -8,8 +8,10 @@
 </template>
 
 <script setup>
+  import { ref } from "vue";
+  import MainLayout from "../../layouts/user/MainLayout.vue";
 </script>
 
-<style scoped>
-/* Checkout page-specific styles */
+<style lang="scss" scoped>
+
 </style>
