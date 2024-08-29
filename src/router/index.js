@@ -21,6 +21,7 @@ import Login from "../pages/user/Login.vue";
 import Register from "../pages/user/Register.vue";
 import ProductsInShop from "../pages/user/ProductsInShop.vue";
 import products2 from "../pages/user/Products.vue"
+import Orders2 from "../layouts/admin/Orders.vue";
 
 
 const routes = [
@@ -39,6 +40,7 @@ const routes = [
     component: AdminLayout,
     children: [
       { path: "dashboard", component: Dashboard },
+      { path: "orders", component: Orders2 },
       { path: "products", component: Products },
       { path: "products/create", component: CreateProduct },
       { path: "products/:id/edit", component: UpdateProduct },
@@ -48,6 +50,10 @@ const routes = [
       {
         path: "shop-products/:clientId/create",
         component: CreateShopProduct,
+      },
+      {
+        path: "orders/:clientId",
+        component: Orders2,
       },
       {
         path: "shop-products/:clientId/edit/:productId",

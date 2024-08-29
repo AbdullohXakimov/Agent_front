@@ -26,6 +26,12 @@
         >
           View Products
         </router-link>
+        <router-link
+          :to="`/admin/orders/${client.id}`"
+          class="bg-indigo-500 text-white px-4 py-2 rounded mt-4 inline-block hover:bg-indigo-600"
+        >
+          View Orders
+        </router-link>
         <button
           @click="addShopProduct(client.id)"
           class="bg-green-500 text-white px-4 py-2 rounded mt-4 inline-block hover:bg-green-600"

@@ -94,7 +94,6 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
 import { apiRequest } from "@/utils/api.js";
 import { API_BASE_URL } from "../../config";
 
@@ -102,18 +101,12 @@ const orders = ref([]);
 const activeFilter = ref("all");
 const filteredOrders = ref([]);
 const filterDate = ref("");
-const route = useRoute();
-const clientId = route.params.clientId;
 
 const fetchOrders = async () => {
   try {
-    const url = clientId 
-      ? `${API_BASE_URL}/orders/${clientId}` 
-      : `${API_BASE_URL}/orders`;
-
     const data = await apiRequest({
       method: "GET",
-      url,
+      url: `${API_BASE_URL}/orders`,
       tokenRequired: true,
     });
     orders.value = data;

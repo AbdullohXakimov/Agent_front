@@ -13,8 +13,8 @@
       <router-link to="/admin/clients" class="block py-2.5 px-4 rounded hover:bg-gray-700">
         Clients
       </router-link>
-      <router-link to="/admin/shop-products" class="block py-2.5 px-4 rounded hover:bg-gray-700">
-        Shop Products
+      <router-link to="/admin/orders" class="block py-2.5 px-4 rounded hover:bg-gray-700">
+        Orders
       </router-link>
     </nav>
   </div>
