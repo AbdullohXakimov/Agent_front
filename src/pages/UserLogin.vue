@@ -39,14 +39,33 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { apiRequest } from "@/utils/api";
+import { API_BASE_URL } from "@/config";
 
-const email = ref('');
-const password = ref('');
 
-function handleLogin() {
-  // Add logic to handle login
-  console.log({ email: email.value, password: password.value });
+const email = ref("");
+const password = ref("");
+const router = useRouter();
+
+async function handleLogin() {
+  try {
+    const result = await apiRequest({
+      method: "POST",
+      url: `${API_BASE_URL}/clients/login`,
+      body: { email: email.value, password: password.value },
+      tokenRequired: false,
+    });
+
+    localStorage.setItem("access_token", result.tokens.accessToken);
+    localStorage.setItem("refresh_token", result.tokens.refreshToken);
+    alert("Login successful!");
+    router.push("/");
+  } catch (error) {
+    console.error("Error logging in:", error);
+    alert("Failed to login.");
+  }
 }
 </script>
 

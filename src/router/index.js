@@ -20,6 +20,7 @@ import Orders from "../pages/user/Orders.vue";
 import Login from "../pages/user/Login.vue";
 import Register from "../pages/user/Register.vue";
 import ProductsInShop from "../pages/user/ProductsInShop.vue";
+import products2 from "../pages/user/Products.vue"
 
 
 const routes = [
@@ -63,7 +64,8 @@ const routes = [
   { path: "/orders", component: Orders },
   { path: "/login", component: Login },
   { path: "/register", component: Register },
-  { path: "/products-in-shop", component: ProductsInShop},
+  { path: "/products-in-shop", component: ProductsInShop },
+  { path: "/products", component: products2 },
 ];
 
 const router = createRouter({
@@ -75,8 +77,8 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("access_token");
 
   if ( !token) {
-    if (to.name !== "admin_login") {
-      return next({ name: "admin_login" });
+    if (to.name !== "user_login" && to.name !== "admin_login") {
+      return next({ name: "user_login" });
     }
   }
 
