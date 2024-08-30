@@ -23,9 +23,8 @@ export async function apiRequest({ method, url, body, tokenRequired = true }) {
   if (!response.ok) {
     if (response.status === 401) {
       const hendle = await handleTokenExpiration();
-      if(hendle.ok)
-      return apiRequest({ method, url, body, tokenRequired });
-      throw new Error("Something wrong!")
+      if (hendle.ok) return apiRequest({ method, url, body, tokenRequired });
+      throw new Error("Something wrong!");
     }
     throw new Error("API request failed");
   }

@@ -48,7 +48,6 @@ import { useRouter } from "vue-router";
 import { apiRequest } from "@/utils/api";
 import { API_BASE_URL } from "@/config";
 
-
 const email = ref("");
 const password = ref("");
 const router = useRouter();

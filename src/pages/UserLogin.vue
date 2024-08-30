@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
     <div class="bg-white p-8 rounded-lg shadow-lg w-96">
-      <h2 class="text-2xl font-bold mb-6 text-center">User Login</h2>
+      <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
       <form @submit.prevent="handleLogin">
         <div class="mb-4">
           <label for="email" class="block text-gray-700">Email</label>
@@ -27,12 +27,6 @@
         >
           Login
         </button>
-        <router-link 
-          to="/admin_login"
-          class="block text-center bg-gray-300 text-gray-800 py-2 px-4 rounded-lg shadow hover:bg-gray-400 transition-colors"
-        >
-          Go to Admin Login
-        </router-link>
       </form>
     </div>
   </div>
@@ -61,7 +55,13 @@ async function handleLogin() {
     localStorage.setItem("access_token", result.tokens.accessToken);
     localStorage.setItem("refresh_token", result.tokens.refreshToken);
     alert("Login successful!");
-    router.push("/");
+    if (result.admin) {
+    router.push("/admin/dashboard");
+      
+    }
+    else{
+      router.push("/");
+    }
   } catch (error) {
     console.error("Error logging in:", error);
     alert("Failed to login.");
