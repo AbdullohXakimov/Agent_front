@@ -1,91 +1,33 @@
 <template>
-  <div class="p-6 bg-white shadow-md rounded-lg">
-    <h2 class="text-2xl font-bold mb-6">Manage Orders</h2>
-
-    <!-- Filter buttons -->
-    <div class="flex mb-4 space-x-4">
-      <button
-        @click="setFilter('all')"
-        :class="{
-          'bg-blue-500 text-white': activeFilter === 'all',
-          'bg-gray-200': activeFilter !== 'all'
-        }"
-        class="px-4 py-2 rounded"
+  <div>
+    <h2 class="text-2xl font-bold mb-6">Client's Shop Products</h2>
+    <!-- List of client's shop products -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div
+        v-for="product in shopProducts"
+        :key="product.id"
+        class="bg-white p-6 rounded-lg shadow"
       >
-        All
-      </button>
-      <button
-        @click="setFilter('finished')"
-        :class="{
-          'bg-blue-500 text-white': activeFilter === 'finished',
-          'bg-gray-200': activeFilter !== 'finished'
-        }"
-        class="px-4 py-2 rounded"
-      >
-        Finished
-      </button>
-      <button
-        @click="setFilter('unfinished')"
-        :class="{
-          'bg-blue-500 text-white': activeFilter === 'unfinished',
-          'bg-gray-200': activeFilter !== 'unfinished'
-        }"
-        class="px-4 py-2 rounded"
-      >
-        Unfinished
-      </button>
-    </div>
-
-    <!-- Date filter -->
-    <div class="flex mb-4 space-x-4">
-      <input
-        type="date"
-        v-model="filterDate"
-        class="px-4 py-2 border rounded"
-        placeholder="Filter by date"
-      />
-      <button
-        @click="applyFilters"
-        class="px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Apply Filters
-      </button>
-    </div>
-
-    <!-- Orders grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="order in filteredOrders" :key="order.id" class="p-4 bg-gray-50 rounded-lg shadow flex flex-col justify-between">
-        <!-- Client details -->
-        <div>
-          <h3 class="text-lg font-semibold mb-2">Client: {{ order.client.name }}</h3>
-          <p class="text-gray-600 mb-2">Email: {{ order.client.email }}</p>
-          <p class="text-gray-600 mb-2">Phone: {{ order.client.phone }}</p>
-          <p class="text-gray-600 mb-4">Address: {{ order.client.address }}</p>
-          
-          <!-- Order Items -->
-          <ul class="mb-4">
-            <li v-for="item in order.orderItem" :key="item.id" class="text-gray-700">
-              {{ item.product.name }} - {{ item.amount }} pcs - ${{ item.total }}
-            </li>
-          </ul>
-        </div>
-
-        <!-- Total price and finish button -->
-        <div class="flex items-center justify-between mt-auto">
-          <p class="text-gray-600">Total Price: ${{ order.totalPrice }}</p>
+        <h3 class="text-lg font-semibold">{{ product.name }}</h3>
+        <p class="mt-2 text-gray-600">
+          <strong>Price:</strong> ${{ product.price }}
+        </p>
+        <p class="mt-1 text-gray-600">
+          <strong>Amount in Shop:</strong> {{ product.amountInShop }}
+        </p>
+        <div class="mt-4 flex justify-between">
           <button
-            v-if="!order.finished"
-            @click="markAsFinished(order.id)"
-            class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            @click="editProduct(product.id)"
+            class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
           >
-            Mark as Finished
+            Edit
           </button>
-          <p
-            v-else
-            class="font-bold text-green-600"
+          <button
+            @click="deleteProduct(product.id)"
+            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
           >
-            Finished
-          </p>
+            Delete
+          </button>
         </div>
       </div>
     </div>
@@ -94,75 +36,67 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { apiRequest } from "@/utils/api.js";
-import { API_BASE_URL } from "../../config";
+import { useRoute, useRouter } from "vue-router";
+import { apiRequest } from "@/utils/api"; // Assuming the api.js file is in src/utils
+import { API_BASE_URL } from "@/config";
 
-const orders = ref([]);
-const activeFilter = ref("all");
-const filteredOrders = ref([]);
-const filterDate = ref("");
+
+const shopProducts = ref([]);
 const route = useRoute();
-const clientId = route.params.clientId;
+const router = useRouter();
+const clientId = route.params.clientId; // Access the clientId from the route params
 
-const fetchOrders = async () => {
+async function fetchClientProducts(clientId) {
   try {
-    const url = clientId 
-      ? `${API_BASE_URL}/orders/${clientId}` 
-      : `${API_BASE_URL}/orders`;
-
     const data = await apiRequest({
       method: "GET",
-      url,
-      tokenRequired: true,
+      url: `${API_BASE_URL}/client-products/admins/${clientId}`,
     });
-    orders.value = data;
-    applyFilters(); // Apply filters after fetching orders
+
+    // Fetch product details by ID
+    for (const product of data) {
+      const productData = await apiRequest({
+        method: "GET",
+        url: `${API_BASE_URL}/products/${product.productId}`,
+      });
+
+      product.name = productData.name;
+      product.price = productData.price;
+      product.amountInShop = product.amount; // Display the amount of this product in the shop
+    }
+
+    shopProducts.value = data; // Assign the fetched products to shopProducts
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    console.error("Error fetching client products:", error);
   }
-};
+}
 
-const setFilter = (filter) => {
-  activeFilter.value = filter;
-  applyFilters();
-};
-
-const applyFilters = () => {
-  filteredOrders.value = orders.value;
-
-  if (activeFilter.value !== 'all') {
-    filteredOrders.value = filteredOrders.value.filter(order =>
-      activeFilter.value === 'finished' ? order.finished : !order.finished
-    );
-  }
-
-  if (filterDate.value) {
-    filteredOrders.value = filteredOrders.value.filter(order =>
-      new Date(order.createdAt).toDateString() === new Date(filterDate.value).toDateString()
-    );
-  }
-};
-
-const markAsFinished = async (orderId) => {
+async function deleteProduct(productId) {
   try {
     await apiRequest({
-      method: "PATCH",
-      url: `${API_BASE_URL}/orders/${orderId}/finish`,
-      body: { finished: true },
-      tokenRequired: true,
+      method: "DELETE",
+      url: `${API_BASE_URL}/client-products/${productId}`,
     });
-    fetchOrders(); // Refresh the order list after updating
-  } catch (error) {
-    console.error("Error finishing order:", error);
-  }
-};
 
+    // Remove the deleted product from the shopProducts array
+    shopProducts.value = shopProducts.value.filter(
+      (product) => product.id !== productId
+    );
+  } catch (error) {
+    console.error("Error deleting product:", error);
+  }
+}
+
+function editProduct(productId) {
+  router.push(`/admin/shop-products/${clientId}/edit/${productId}`);
+}
+
+// Fetch client products on component mount
 onMounted(() => {
-  fetchOrders();
+  fetchClientProducts(clientId);
 });
 </script>
 
 <style scoped>
-/* Orders page-specific styles */
+/* Custom styles for the shop products list */
 </style>

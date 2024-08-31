@@ -27,6 +27,13 @@
         >
           Login
         </button>
+        <button 
+          type="button"
+          @click="navigateToRegister"
+          class="bg-green-500 text-white w-full py-2 rounded-lg hover:bg-green-600"
+        >
+          Register
+        </button>
       </form>
     </div>
   </div>
@@ -37,7 +44,6 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { apiRequest } from "@/utils/api";
 import { API_BASE_URL } from "@/config";
-
 
 const email = ref("");
 const password = ref("");
@@ -56,16 +62,18 @@ async function handleLogin() {
     localStorage.setItem("refresh_token", result.tokens.refreshToken);
     alert("Login successful!");
     if (result.admin) {
-    router.push("/admin/dashboard");
-      
-    }
-    else{
+      router.push("/admin/dashboard");
+    } else {
       router.push("/");
     }
   } catch (error) {
     console.error("Error logging in:", error);
-    alert("Failed to login.");
+    alert("Incorrect email or password.");
   }
+}
+
+function navigateToRegister() {
+  router.push("/register");
 }
 </script>
 
